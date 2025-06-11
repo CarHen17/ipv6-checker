@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv6 Checker Professional - Verificador de Sobreposição IPv6</title>
+    
+    <!-- Meta tags otimizadas -->
+    <meta name="description" content="Ferramenta profissional para verificação de sobreposição de prefixos IPv6, análise de redes e planejamento de endereçamento.">
+    <meta name="keywords" content="IPv6, networking, overlap, verification, CIDR, subnetting, RFC">
+    <meta name="author" content="IPv6 Checker Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- PWA Meta tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="IPv6 Checker">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="css/main.css" as="style">
+    <link rel="preload" href="js/app.js" as="script">
+    
+    <!-- Favicon otimizado -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <!-- Font Awesome com defer -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Carregando IPv6 Checker...</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container" id="mainContainer">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-network-wired" aria-hidden="true"></i>
+                    IPv6 Checker Pro
+                </h1>
+                <p class="subtitle">Verificador Profissional de Sobreposição IPv6</p>
+            </div>
+            <div class="header-controls">
+                <button id="helpBtn" class="btn-icon" title="Ajuda (F1)" aria-label="Abrir ajuda">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                <button id="settingsBtn" class="btn-icon" title="Configurações" aria-label="Abrir configurações">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button id="themeToggle" class="btn-icon" title="Alternar tema (Ctrl+D)" aria-label="Alternar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-navigation" role="tablist" aria-label="Funcionalidades principais">
+            <button class="tab active" data-tab="overlap" role="tab" aria-selected="true" aria-controls="tab-overlap">
+                <i class="fas fa-check-double"></i>
+                <span>Verificação</span>
+            </button>
+            <button class="tab" data-tab="multi" role="tab" aria-selected="false" aria-controls="tab-multi">
+                <i class="fas fa-list-check"></i>
+                <span>Múltipla</span>
+            </button>
+            <button class="tab" data-tab="planning" role="tab" aria-selected="false" aria-controls="tab-planning">
+                <i class="fas fa-sitemap"></i>
+                <span>Planejamento</span>
+            </button>
+            <button class="tab" data-tab="calculator" role="tab" aria-selected="false" aria-controls="tab-calculator">
+                <i class="fas fa-calculator"></i>
+                <span>Calculadora</span>
+            </button>
+            <button class="tab" data-tab="validation" role="tab" aria-selected="false" aria-controls="tab-validation">
+                <i class="fas fa-shield-alt"></i>
+                <span>Validação</span>
+            </button>
+        </nav>
+
+        <!-- Tab Content Container -->
+        <main class="tab-container" id="tabContainer">
+            
+            <!-- Overlap Verification Tab -->
+            <section id="tab-overlap" class="tab-content active" role="tabpanel" aria-labelledby="tab-overlap">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-check-double"></i>
+                        Verificação de Sobreposição
+                    </h2>
+                    <p>Verifique se dois prefixos IPv6 se sobrepõem e obtenha sugestões automáticas</p>
+                </div>
+
+                <form class="overlap-form" id="overlapForm" novalidate>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="wanPrefix" class="input-label">
+                                <i class="fas fa-globe"></i>
+                                Prefixo WAN
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="wanPrefix" 
+                                    class="input-field"
+                                    placeholder="Ex.: 2001:db8:a::1/64"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    aria-describedby="wanError"
+                                    data-validation="ipv6"
+                                >
+                                <div class="validation-icon" id="wanValidation" aria-hidden="true"></div>
+                                <button type="button" class="copy-btn" id="copyWanBtn" title="Copiar WAN" aria-label="Copiar prefixo WAN">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="wanError" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="lanPrefix" class="input-label">
+                                <i class="fas fa-network-wired"></i>
+                                Prefixo LAN
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="lanPrefix" 
+                                    class="input-field"
+                                    placeholder="Ex.: 2001:db8:b::/48"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    aria-describedby="lanError"
+                                    data-validation="ipv6"
+                                >
+                                <div class="validation-icon" id="lanValidation" aria-hidden="true"></div>
+                                <button type="button" class="copy-btn" id="copyLanBtn" title="Copiar LAN" aria-label="Copiar prefixo LAN">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="lanError" role="alert" aria-live="polite"></div>
+                        </div>
+                    </div>
+
+                    <div class="action-section">
+                        <button type="submit" id="checkOverlapBtn" class="btn-primary btn-large" disabled>
+                            <i class="fas fa-check-double"></i>
+                            <span>Verificar Sobreposição</span>
+                        </button>
+                        <button type="button" id="quickAnalysisBtn" class="btn-secondary">
+                            <i class="fas fa-bolt"></i>
+                            <span>Análise Rápida</span>
+                        </button>
+                        <button type="button" id="clearBtn" class="btn-ghost">
+                            <i class="fas fa-eraser"></i>
+                            <span>Limpar</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="results-section" style="display: none;">
+                    <div class="result-header">
+                        <div id="statusIndicator" class="status-indicator">
+                            <div class="status-icon">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="status-content">
+                                <h3 id="statusTitle">Verificando...</h3>
+                                <p id="statusMessage">Aguarde...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="resultDetails" class="result-details" style="display: none;">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <div id="suggestionSection" class="suggestion-section" style="display: none;">
+                        <h4><i class="fas fa-lightbulb"></i> Sugestão Automática</h4>
+                        <div class="suggestion-content">
+                            <div class="suggested-prefix">
+                                <code id="suggestedPrefix">-</code>
+                                <button type="button" class="copy-btn" id="copySuggestionBtn" title="Copiar sugestão">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <p id="suggestionContext">Aguardando análise...</p>
+                        </div>
+                        <div class="suggestion-actions">
+                            <button type="button" id="applySuggestionBtn" class="btn-primary" disabled>
+                                <i class="fas fa-check"></i>
+                                Aplicar Sugestão
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Multi Analysis Tab -->
+            <section id="tab-multi" class="tab-content" role="tabpanel" aria-labelledby="tab-multi">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-list-check"></i>
+                        Análise de Múltiplas Redes
+                    </h2>
+                    <p>Analise conflitos entre vários prefixos IPv6 simultaneamente</p>
+                </div>
+                <!-- Content will be loaded dynamically -->
+                <div class="tab-content-placeholder">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando análise múltipla...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Network Planning Tab -->
+            <section id="tab-planning" class="tab-content" role="tabpanel" aria-labelledby="tab-planning">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-sitemap"></i>
+                        Planejamento de Rede
+                    </h2>
+                    <p>Gere planos de sub-redes e otimize seu esquema de endereçamento</p>
+                </div>
+                <!-- Content will be loaded dynamically -->
+                <div class="tab-content-placeholder">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando planejamento...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calculator Tab -->
+            <section id="tab-calculator" class="tab-content" role="tabpanel" aria-labelledby="tab-calculator">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-calculator"></i>
+                        Calculadora IPv6
+                    </h2>
+                    <p>Ferramentas de cálculo e conversão para endereços IPv6</p>
+                </div>
+                <!-- Content will be loaded dynamically -->
+                <div class="tab-content-placeholder">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando calculadora...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Advanced Validation Tab -->
+            <section id="tab-validation" class="tab-content" role="tabpanel" aria-labelledby="tab-validation">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-shield-alt"></i>
+                        Validação Avançada
+                    </h2>
+                    <p>Validação completa com verificações RFC, segurança e conformidade</p>
+                </div>
+                <!-- Content will be loaded dynamically -->
+                <div class="tab-content-placeholder">
+                    <div class="loading-content">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando validação...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container" aria-live="polite" aria-label="Notificações"></div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer" class="modal-container"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
+    
+    <!-- Fallback para navegadores sem suporte a ES6 Modules -->
+    <script nomodule>
+        document.body.innerHTML = '<div style="text-align: center; padding: 50px;"><h1>Navegador não suportado</h1><p>Este aplicativo requer um navegador moderno com suporte a ES6 Modules.</p></div>';
+    </script>
+</body>
+</html>
